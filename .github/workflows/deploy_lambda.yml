@@ -40,16 +40,15 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
           aws-region: us-east-2
 
       # 6. Desplegar la función Lambda
-      - name: Deploy Lambda function
+      - name: Deploy with SAM
         run: |
-          aws lambda update-function-code \
-            --function-name kuosel-lambdalith \
-            --zip-file fileb://deployment-package.zip
+          sam build
+          sam deploy --no-confirm-changeset --stack-name kuosel-lambdalith --capabilities CAPABILITY_IAM
 
       # 7. Limpiar archivos temporales
       - name: Clean up temporary files
