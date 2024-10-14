@@ -48,7 +48,7 @@ jobs:
       - name: Deploy with SAM
         run: |
           sam build
-          sam deploy --no-confirm-changeset --stack-name kuosel-lambdalith --capabilities CAPABILITY_IAM
+          sam deploy --resolve-s3 --no-confirm-changeset --stack-name kuosel-lambdalith --capabilities CAPABILITY_IAM
 
       # 7. Limpiar archivos temporales
       - name: Clean up temporary files
