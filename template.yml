@@ -8,9 +8,6 @@ Parameters:
   CognitoClientId:
     Type: String
     Description: "ID del Cliente de la aplicación en Cognito"
-  AwsRegion:
-    Type: String
-    Description: "Región de AWS"
   CognitoDomain:
     Type: String
     Description: "Dominio de Cognito"
@@ -44,7 +41,6 @@ Resources:
         Variables:
           COGNITO_USER_POOL_ID: !Ref CognitoUserPoolId
           COGNITO_CLIENT_ID: !Ref CognitoClientId
-          AWS_REGION: !Ref AwsRegion
           COGNITO_DOMAIN: !Ref CognitoDomain
           DB_USER: !Ref DbUser
           DB_PASSWORD: !Ref DbPassword
