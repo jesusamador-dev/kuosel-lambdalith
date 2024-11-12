@@ -4,9 +4,12 @@ Resources:
   KuoselLambdaLith:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: kuosel-lambdalith  # Nombre de la función Lambda existente
-      Handler: main.handler
+      FunctionName: kuosel-lambdalith
+      Handler: main.handler  # Asegúrate de que el handler apunte correctamente a `main.py`
       Runtime: python3.11
-      CodeUri: package/
+      CodeUri: package/       # La carpeta donde está el código y las dependencias
       MemorySize: 128
       Timeout: 30
+      Environment:
+        Variables:
+          PYTHONPATH: "/var/task/dependencies:/var/task"  # Añade dependencies al PYTHONPATH
