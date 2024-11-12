@@ -1,0 +1,83 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from app.src.services.user_service import UserService
+from app.src.db.database import get_db
+
+router = APIRouter()
+
+
+# Modelos de datos para las solicitudes
+class RegisterUserRequest(BaseModel):
+    email: str
+    password: str
+    additional_attributes: dict = None
+
+
+class ConfirmUserRequest(BaseModel):
+    email: str
+    confirmation_code: str
+
+
+class LoginUserRequest(BaseModel):
+    email: str
+    password: str
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+
+class ConfirmForgotPasswordRequest(BaseModel):
+    email: str
+    confirmation_code: str
+    new_password: str
+
+
+# Ruta para registro de usuario
+@router.post("/register")
+async def register_user(request: RegisterUserRequest, db: Session = Depends(get_db)):
+    user_service = UserService(db)
+    return user_service.register_user(
+        email=request.email,
+        password=request.password,
+        additional_attributes=request.additional_attributes
+    )
+
+
+# Ruta para confirmación de usuario
+@router.post("/confirm")
+async def confirm_user(request: ConfirmUserRequest, db: Session = Depends(get_db)):
+    user_service = UserService(db)
+    return user_service.confirm_user(
+        email=request.email,
+        confirmation_code=request.confirmation_code
+    )
+
+
+# Ruta para login de usuario
+@router.post("/login")
+async def login_user(request: LoginUserRequest, db: Session = Depends(get_db)):
+    user_service = UserService(db)
+    return user_service.login_user(
+        email=request.email,
+        password=request.password
+    )
+
+
+# Ruta para solicitud de recuperación de contraseña
+@router.post("/forgot-password")
+async def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user_service = UserService(db)
+    return user_service.forgot_password(request.email)
+
+
+# Ruta para confirmación de recuperación de contraseña
+@router.post("/confirm-forgot-password")
+async def confirm_forgot_password(request: ConfirmForgotPasswordRequest, db: Session = Depends(get_db)):
+    user_service = UserService(db)
+    return user_service.confirm_forgot_password(
+        email=request.email,
+        confirmation_code=request.confirmation_code,
+        new_password=request.new_password
+    )

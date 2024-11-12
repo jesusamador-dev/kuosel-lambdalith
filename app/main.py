@@ -1,17 +1,16 @@
+# app/main.py
 from fastapi import FastAPI
 from mangum import Mangum
+from app.src.core.security.auth_middleware import AuthMiddleware
+from app.src.api.v1.auth_routes import router as auth_router
 
 app = FastAPI()
 
+# Añadir el middleware de autenticación para rutas protegidas
+app.add_middleware(AuthMiddleware)
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+# Incluir las rutas de autenticación
+app.include_router(auth_router, prefix="/v1")
 
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
-
-
+# Configurar handler para AWS Lambda
 handler = Mangum(app)
