@@ -4,6 +4,7 @@ Resources:
   KuoselLambdaLith:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: kuosel-lambdalith  # Nombre de la función Lambda existente
       Handler: main.handler
       Runtime: python3.11
       CodeUri: package/
