@@ -4,9 +4,10 @@ from authlib.jose import jwt, JoseError
 from fastapi import HTTPException
 from app.src.core.config import settings
 
+
 class CognitoService:
     def __init__(self):
-        self.jwks_url = f"https://cognito-idp.{settings.COGNITO_REGION}.amazonaws.com/{settings.COGNITO_USER_POOL_ID}/.well-known/jwks.json"
+        self.jwks_url = f"https://cognito-idp.{settings.AWS_REGION}.amazonaws.com/{settings.COGNITO_USER_POOL_ID}/.well-known/jwks.json"
         self.jwks_keys = self._fetch_jwks_keys()
 
     def _fetch_jwks_keys(self):

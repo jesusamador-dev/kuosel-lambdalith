@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     # Configuración de AWS Cognito
     COGNITO_USER_POOL_ID: str = Field(..., env="COGNITO_USER_POOL_ID")
     COGNITO_CLIENT_ID: str = Field(..., env="COGNITO_CLIENT_ID")
-    COGNITO_REGION: str = Field(..., env="COGNITO_REGION")
+    AWS_REGION: str = Field(..., env="AWS_REGION")
     COGNITO_DOMAIN: str = Field(..., env="COGNITO_DOMAIN")
 
     # Configuración de la base de datos PostgreSQL
