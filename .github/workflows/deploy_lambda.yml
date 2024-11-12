@@ -22,18 +22,20 @@ jobs:
         with:
           python-version: '3.11'
 
-      # 3. Instalar dependencias
+      # 3. Instalar dependencias en la carpeta dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          mkdir -p dependencies
+          pip install -r requirements.txt -t dependencies/
 
       # 4. Empaquetar la aplicación Lambda usando AWS SAM
       - name: Package SAM application
         run: |
           mkdir -p package
-          pip install -r requirements.txt -t package/
-          cp -r app/* package/
+          cp -r dependencies package/dependencies
+          cp -r src/* package/
+          cp main.py package/
           cd package && zip -r ../deployment-package.zip .
 
       # 5. Configurar AWS CLI
@@ -52,4 +54,4 @@ jobs:
 
       # 7. Limpiar archivos temporales
       - name: Clean up temporary files
-        run: rm -rf package/ deployment-package.zip
+        run: rm -rf package/ dependencies/ deployment-package.zip
