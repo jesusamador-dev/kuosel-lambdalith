@@ -45,7 +45,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
-          aws-region: us-east-2
+          aws-region: ${{ secrets.AWS_REGION }}
 
       # 6. Desplegar la función Lambda
       - name: Deploy with SAM
@@ -61,8 +61,7 @@ jobs:
             DbPassword=${{ secrets.DB_PASSWORD }} \
             DbHost=${{ secrets.DB_HOST }} \
             DbPort=${{ secrets.DB_PORT }} \
-            DbName=${{ secrets.DB_NAME }} \
-            SecretKey=${{ secrets.SECRET_KEY }}
+            DbName=${{ secrets.DB_NAME }}
       
 
       # 7. Limpiar archivos temporales

@@ -21,39 +21,35 @@ Resources:
           DB_HOST: !Ref DbHost
           DB_PORT: !Ref DbPort
           DB_NAME: !Ref DbName
-          SECRET_KEY: !Ref SecretKey
           PYTHONPATH: "/var/task/dependencies:/var/task"  # Añade dependencies al PYTHONPATH
         Policies:
           - AWSLambdaBasicExecutionRole  # Asigna permisos básicos de ejecución
-# Declaración de parámetros para pasar las variables de entorno en tiempo de despliegue
-Parameters:
-  CognitoUserPoolId:
-    Type: String
-    Description: "ID del User Pool de Cognito"
-  CognitoClientId:
-    Type: String
-    Description: "ID del Cliente de la aplicación en Cognito"
-  AwsRegion:
-    Type: String
-    Description: "Región de AWS"
-  CognitoDomain:
-    Type: String
-    Description: "Dominio de Cognito"
-  DbUser:
-    Type: String
-    Description: "Usuario de la base de datos"
-  DbPassword:
-    Type: String
-    Description: "Contraseña de la base de datos"
-  DbHost:
-    Type: String
-    Description: "Host de la base de datos"
-  DbPort:
-    Type: String
-    Description: "Puerto de la base de datos"
-  DbName:
-    Type: String
-    Description: "Nombre de la base de datos"
-  SecretKey:
-    Type: String
-    Description: "Clave secreta para la aplicación"
+  # Declaración de parámetros para pasar las variables de entorno en tiempo de despliegue
+  Parameters:
+    CognitoUserPoolId:
+      Type: String
+      Description: "ID del User Pool de Cognito"
+    CognitoClientId:
+      Type: String
+      Description: "ID del Cliente de la aplicación en Cognito"
+    AwsRegion:
+      Type: String
+      Description: "Región de AWS"
+    CognitoDomain:
+      Type: String
+      Description: "Dominio de Cognito"
+    DbUser:
+      Type: String
+      Description: "Usuario de la base de datos"
+    DbPassword:
+      Type: String
+      Description: "Contraseña de la base de datos"
+    DbHost:
+      Type: String
+      Description: "Host de la base de datos"
+    DbPort:
+      Type: String
+      Description: "Puerto de la base de datos"
+    DbName:
+      Type: String
+      Description: "Nombre de la base de datos"
