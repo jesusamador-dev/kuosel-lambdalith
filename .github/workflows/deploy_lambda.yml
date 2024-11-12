@@ -32,11 +32,12 @@ jobs:
       # 4. Empaquetar la aplicación Lambda usando AWS SAM
       - name: Package SAM application
         run: |
-          mkdir -p package
+          mkdir -p package/src  # Crear el directorio src en package
           cp -r dependencies package/dependencies
-          cp -r app/* package/src/
-          cp main.py package/
+          cp -r app/* package/src/  # Copiar el contenido de src a package/src/
+          cp main.py package/  # Copiar main.py a la raíz de package
           cd package && zip -r ../deployment-package.zip .
+
 
       # 5. Configurar AWS CLI
       - name: Configure AWS credentials
