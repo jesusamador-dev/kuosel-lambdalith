@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p package
           cp -r dependencies package/dependencies
-          cp -r src/* package/
+          cp -r app/* package/src/
           cp main.py package/
           cd package && zip -r ../deployment-package.zip .
 
