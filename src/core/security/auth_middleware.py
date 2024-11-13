@@ -2,7 +2,7 @@
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from fastapi import HTTPException
-from app.src.core.security.cognito_service import CognitoService
+from src.core.security.cognito_service import CognitoService
 
 
 class AuthMiddleware(BaseHTTPMiddleware):

@@ -2,7 +2,7 @@
 import requests
 from authlib.jose import jwt, JoseError
 from fastapi import HTTPException
-from app.src.core.config import settings
+from src.core.config import settings
 
 
 class CognitoService:

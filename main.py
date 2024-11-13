@@ -1,8 +1,8 @@
 # app/main.py
 from fastapi import FastAPI
 from mangum import Mangum
-from app.src.core.security.auth_middleware import AuthMiddleware
-from app.src.api.v1.auth_routes import router as auth_router
+from src.core.security.auth_middleware import AuthMiddleware
+from src.api.v1.auth_routes import router as auth_router
 
 app = FastAPI()
 

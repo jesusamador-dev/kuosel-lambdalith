@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from app.src.core.security.cognito_service import CognitoService
-from app.src.db.repositories.user_repository import UserRepository
+from src.core.security.cognito_service import CognitoService
+from src.db.repositories.user_repository import UserRepository
 
 
 class UserService:
