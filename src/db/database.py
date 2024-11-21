@@ -1,4 +1,3 @@
-# app/db/base.py
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -14,6 +13,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base de modelos
 Base = declarative_base()
+
 
 # Dependencia para obtener la sesión de base de datos
 def get_db():

@@ -12,10 +12,18 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         # Excluir rutas públicas, como documentación
-        excluded_paths = ["/docs", "/openapi.json", "/api/v1/register", "/api/v1/login", "/api/v1/forgot-password",
-                          "/api/v1/confirm-forgot-password"]
+        excluded_paths = [
+            "/docs",
+            "/openapi.json",
+            "/v1/register",
+            "/v1/confirm",
+            "/v1/resend-confirmation",
+            "/v1/login",
+            "/v1/forgot-password",
+            "/v1/confirm-forgot-password"]
 
         # Verifica si la ruta actual está excluida
+        print(request.url.path)
         if request.url.path in excluded_paths:
             return await call_next(request)
 

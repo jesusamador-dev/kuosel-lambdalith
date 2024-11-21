@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     COGNITO_CLIENT_ID: str = Field(..., env="COGNITO_CLIENT_ID")
     AWS_REGION: str = os.getenv("AWS_REGION")
     COGNITO_DOMAIN: str = Field(..., env="COGNITO_DOMAIN")
+    COGNITO_CLIENT_SECRET: str = Field(..., env="COGNITO_CLIENT_SECRET")
 
     # Configuración de la base de datos PostgreSQL
     DB_USER: str = Field(..., env="DB_USER")

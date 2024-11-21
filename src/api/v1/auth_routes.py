@@ -9,13 +9,14 @@ router = APIRouter()
 
 # Modelos de datos para las solicitudes
 class RegisterUserRequest(BaseModel):
+    username: str
     email: str
     password: str
     additional_attributes: dict = None
 
 
 class ConfirmUserRequest(BaseModel):
-    email: str
+    username: str
     confirmation_code: str
 
 
@@ -34,11 +35,16 @@ class ConfirmForgotPasswordRequest(BaseModel):
     new_password: str
 
 
+class ResendConfirmationRequest(BaseModel):
+    username: str
+
+
 # Ruta para registro de usuario
 @router.post("/register")
 async def register_user(request: RegisterUserRequest, db: Session = Depends(get_db)):
     user_service = UserService(db)
     return user_service.register_user(
+        username=request.username,
         email=request.email,
         password=request.password,
         additional_attributes=request.additional_attributes
@@ -50,7 +56,7 @@ async def register_user(request: RegisterUserRequest, db: Session = Depends(get_
 async def confirm_user(request: ConfirmUserRequest, db: Session = Depends(get_db)):
     user_service = UserService(db)
     return user_service.confirm_user(
-        email=request.email,
+        username=request.username,
         confirmation_code=request.confirmation_code
     )
 
@@ -81,3 +87,10 @@ async def confirm_forgot_password(request: ConfirmForgotPasswordRequest, db: Ses
         confirmation_code=request.confirmation_code,
         new_password=request.new_password
     )
+
+
+# Ruta para reenviar el código de confirmación
+@router.post("/resend-confirmation")
+async def resend_confirmation_code(request: ResendConfirmationRequest, db: Session = Depends(get_db)):
+    user_service = UserService(db)
+    return user_service.resend_confirmation_code(username=request.username)
