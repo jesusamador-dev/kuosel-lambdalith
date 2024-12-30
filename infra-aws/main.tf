@@ -42,7 +42,6 @@ resource "aws_iam_role" "lambda_execution_role" {
   })
 }
 
-# Adjuntar políticas al rol
 # Adjuntar política AWSLambdaBasicExecutionRole
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = length(data.aws_iam_role.existing_role.name) > 0 ? data.aws_iam_role.existing_role.name : aws_iam_role.lambda_execution_role[0].name
