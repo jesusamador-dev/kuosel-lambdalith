@@ -72,15 +72,16 @@ jobs:
       # 9. Planificar cambios con Terraform
       - name: Terraform Plan
         working-directory: infra-aws
-        run: terraform plan \
-          -var "COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" \
-          -var "COGNITO_CLIENT_ID=${{ secrets.COGNITO_CLIENT_ID }}" \
-          -var "COGNITO_DOMAIN=${{ secrets.COGNITO_DOMAIN }}" \
-          -var "DB_USER=${{ secrets.DB_USER }}" \
-          -var "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
-          -var "DB_HOST=${{ secrets.DB_HOST }}" \
-          -var "DB_PORT=${{ secrets.DB_PORT }}" \
-          -var "DB_NAME=${{ secrets.DB_NAME }}"
+        run: |
+          terraform -chdir=infra-aws plan \
+            -var="COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" \
+            -var="COGNITO_CLIENT_ID=${{ secrets.COGNITO_CLIENT_ID }}" \
+            -var="COGNITO_DOMAIN=${{ secrets.COGNITO_DOMAIN }}" \
+            -var="DB_USER=${{ secrets.DB_USER }}" \
+            -var="DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+            -var="DB_HOST=${{ secrets.DB_HOST }}" \
+            -var="DB_PORT=${{ secrets.DB_PORT }}" \
+            -var="DB_NAME=${{ secrets.DB_NAME }}"
 
       # 10. Aplicar cambios con Terraform
       - name: Apply Terraform
