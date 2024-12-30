@@ -71,8 +71,8 @@ jobs:
 
       # 9. Planificar cambios con Terraform
       - name: Terraform Plan
-        working-directory: infra-aws
         run: |
+          ls -la
           terraform -chdir=infra-aws plan \
             -var="COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" \
             -var="COGNITO_CLIENT_ID=${{ secrets.COGNITO_CLIENT_ID }}" \
