@@ -10,5 +10,6 @@ app.add_middleware(AuthMiddleware)
 
 # Incluir las rutas de autenticación
 app.include_router(auth_router, prefix="/v1")
+
 # Configurar handler para AWS Lambda
 handler = Mangum(app)
