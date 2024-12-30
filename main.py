@@ -13,3 +13,6 @@ app.include_router(auth_router, prefix="/v1")
 
 # Configurar handler para AWS Lambda
 handler = Mangum(app)
+
+
+#Codigo nuevo

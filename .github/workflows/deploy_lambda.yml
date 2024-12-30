@@ -48,8 +48,8 @@ jobs:
       - name: Package SAM application
         run: |
           mkdir -p package/
+          chmod -R 755 dependencies/
           rsync -av dependencies/ package/dependencies
-          ls -R package/dependencies
           cp main.py package/  # Copiar main.py a la raíz de package
           cp -r src/ package/src  # Si tienes una carpeta src con tu código fuente
           cd package && zip -r ../deployment-package.zip .
