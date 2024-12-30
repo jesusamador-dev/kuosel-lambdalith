@@ -17,8 +17,15 @@ resource "aws_s3_object" "lambda_zip" {
   source = "deployment-package.zip" # Ruta local del ZIP
 }
 
-# Rol de ejecución para la Lambda
+# Data source para buscar el rol existente
+data "aws_iam_role" "existing_role" {
+  name = "kuosel-lambda-execution-role"
+}
+
+# Recurso para crear el rol si no existe
 resource "aws_iam_role" "lambda_execution_role" {
+  count = length(data.aws_iam_role.existing_role) > 0 ? 0 : 1
+
   name = "kuosel-lambda-execution-role"
 
   assume_role_policy = jsonencode({
@@ -35,11 +42,12 @@ resource "aws_iam_role" "lambda_execution_role" {
   })
 }
 
-# Políticas básicas de ejecución de Lambda
+# Adjuntar políticas al rol
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = aws_iam_role.lambda_execution_role.name
+  role       = coalesce(data.aws_iam_role.existing_role.name, aws_iam_role.lambda_execution_role[0].name)
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
+
 
 # Función Lambda
 resource "aws_lambda_function" "kuosel_lambda" {
