@@ -48,22 +48,16 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# Data source para buscar la función Lambda existente
-data "aws_lambda_function" "existing_lambda" {
-  function_name = "kuosel-lambdalith"
-  count         = try(length(aws_lambda_function.kuosel_lambda.id), 0) == 0 ? 1 : 0
-}
-
-# Función Lambda
+# Función Lambda (condicional entre importación y creación)
 resource "aws_lambda_function" "kuosel_lambda" {
-  count         = length(data.aws_lambda_function.existing_lambda) > 0 ? 0 : 1
+  count = var.lambda_already_exists ? 0 : 1
+
   function_name = "kuosel-lambdalith"
   handler       = "main.handler"
   runtime       = "python3.11"
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
   s3_key        = aws_s3_object.lambda_zip.key
 
-  # Condicional para el rol
   role = coalesce(data.aws_iam_role.existing_role.arn, aws_iam_role.lambda_execution_role[0].arn)
 
   memory_size = 128
@@ -82,4 +76,10 @@ resource "aws_lambda_function" "kuosel_lambda" {
       PYTHONPATH           = "/var/task/dependencies:/var/task"
     }
   }
+}
+
+# Data source para buscar la función Lambda existente
+data "aws_lambda_function" "existing_lambda" {
+  count         = var.lambda_already_exists ? 1 : 0
+  function_name = "kuosel-lambdalith"
 }
