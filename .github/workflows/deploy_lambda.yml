@@ -38,7 +38,7 @@ jobs:
 
       # 4. Validar generación de archivos .so
       - name: Validate .so files
-        run: ls -R dependencies
+        run: ls -l dependencies/pydantic_core
 
       - name: Clean previous builds
         run: rm -rf package/ deployment-package.zip
