@@ -1,4 +1,3 @@
-# app/main.py
 from fastapi import FastAPI
 from mangum import Mangum
 from src.core.security.auth_middleware import AuthMiddleware
