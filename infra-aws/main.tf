@@ -14,7 +14,7 @@ resource "random_id" "bucket_id" {
 resource "aws_s3_object" "lambda_zip" {
   bucket = aws_s3_bucket.lambda_bucket.id
   key    = "deployment-package.zip"
-  source = "deployment-package.zip" # Ruta local del ZIP
+  source = "../deployment-package.zip" # Ruta local del ZIP
 }
 
 # Data source para buscar el rol existente
