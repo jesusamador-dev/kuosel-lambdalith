@@ -67,7 +67,7 @@ jobs:
       - name: Deploy with SAM
         run: |
           sam build
-          sam deploy --resolve-s3 --no-confirm-changeset --stack-name kuosel-lambdalith --capabilities CAPABILITY_IAM \
+          sam deploy --use-container --resolve-s3 --no-confirm-changeset --stack-name kuosel-lambdalith --capabilities CAPABILITY_IAM \
             --parameter-overrides \
             CognitoUserPoolId=${{ secrets.COGNITO_USER_POOL_ID }} \
             CognitoClientId=${{ secrets.COGNITO_CLIENT_ID }} \
