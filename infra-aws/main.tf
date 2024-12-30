@@ -44,13 +44,19 @@ resource "aws_iam_role" "lambda_execution_role" {
 
 # Adjuntar políticas al rol
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = length(data.aws_iam_role.existing_role) > 0 ? data.aws_iam_role.existing_role.name : aws_iam_role.lambda_execution_role[0].name
+  role       = coalesce(data.aws_iam_role.existing_role.name, aws_iam_role.lambda_execution_role[0].name)
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+# Data source para buscar la función Lambda existente
+data "aws_lambda_function" "existing_lambda" {
+  function_name = "kuosel-lambdalith"
+  count         = try(length(aws_lambda_function.kuosel_lambda.id), 0) == 0 ? 1 : 0
+}
 
 # Función Lambda
 resource "aws_lambda_function" "kuosel_lambda" {
+  count         = length(data.aws_lambda_function.existing_lambda) > 0 ? 0 : 1
   function_name = "kuosel-lambdalith"
   handler       = "main.handler"
   runtime       = "python3.11"
@@ -58,7 +64,7 @@ resource "aws_lambda_function" "kuosel_lambda" {
   s3_key        = aws_s3_object.lambda_zip.key
 
   # Condicional para el rol
-  role = length(data.aws_iam_role.existing_role) > 0 ? data.aws_iam_role.existing_role.arn : aws_iam_role.lambda_execution_role[0].arn
+  role = coalesce(data.aws_iam_role.existing_role.arn, aws_iam_role.lambda_execution_role[0].arn)
 
   memory_size = 128
   timeout     = 30
