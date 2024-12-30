@@ -45,9 +45,13 @@ jobs:
 
 
       # 4. Empaquetar la aplicación Lambda usando AWS SAM
-      - name: Package SAM application
+      - name: Prepare package directory
         run: |
           chmod -R 755 dependencies/
+          mkdir -p package/
+          rsync -av dependencies/ package/dependencies
+          cp main.py package/
+          cp -r src/ package/src
           ls -l
       
 
@@ -74,7 +78,10 @@ jobs:
             DbHost=${{ secrets.DB_HOST }} \
             DbPort=${{ secrets.DB_PORT }} \
             DbName=${{ secrets.DB_NAME }}
-          
+
+      - name: Prepare package directory
+        run: |
+            unzip -ls .aws-sam/build/KuoselLambdaLith.zip | grep _pydantic_core
 
       # 7. Limpiar archivos temporales
       - name: Clean up temporary files
