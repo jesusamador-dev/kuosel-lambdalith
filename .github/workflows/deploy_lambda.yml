@@ -25,11 +25,12 @@ jobs:
       # 2. Usar Docker para instalar dependencias en un entorno compatible
       - name: Install dependencies in Amazon Linux 2
         run: |
-          docker run --rm -v $(pwd):/var/task lambci/lambda:build-python3.11 bash -c "
-          python3 -m pip install --upgrade pip &&
-          mkdir -p /var/task/dependencies &&
-          pip install -r requirements.txt --target /var/task/dependencies
-          "
+            docker run --rm -v $(pwd):/var/task public.ecr.aws/sam/build-python3.11 bash -c "
+            python3 -m pip install --upgrade pip &&
+            mkdir -p /var/task/dependencies &&
+            pip install -r requirements.txt --target /var/task/dependencies
+            "
+
 
       # 3. Empaquetar la aplicación Lambda
       - name: Package Lambda function
