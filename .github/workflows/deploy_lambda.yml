@@ -81,7 +81,7 @@ jobs:
 
       - name: Search zip
         run: |
-            ls -la
+            ls -la .aws-sam/build
             
 
       # 7. Limpiar archivos temporales
