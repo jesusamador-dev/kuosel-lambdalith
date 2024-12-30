@@ -56,7 +56,7 @@ jobs:
 
       - name: Validate ZIP contents
         run: |
-          unzip -l deployment-package.zip | grep _pydantic_core
+          unzip -ls deployment-package.zip | grep _pydantic_core
       
 
       # 5. Configurar AWS CLI
@@ -82,7 +82,12 @@ jobs:
             DbHost=${{ secrets.DB_HOST }} \
             DbPort=${{ secrets.DB_PORT }} \
             DbName=${{ secrets.DB_NAME }}
-      
+          
+
+      - name: Validate ZIP contents
+        run: |
+          unzip -ls deployment-package.zip | grep _pydantic_core
+          
 
       # 7. Limpiar archivos temporales
       - name: Clean up temporary files
