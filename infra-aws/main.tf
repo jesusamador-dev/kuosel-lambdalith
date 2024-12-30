@@ -91,18 +91,16 @@ resource "aws_lambda_function" "kuosel_lambda" {
 
 # Actualizar la Lambda si ya existe
 resource "aws_lambda_function" "update_lambda" {
-  count = can(data.aws_lambda_function.existing_lambda.function_name) ? 1 : 0
-
-  function_name = data.aws_lambda_function.existing_lambda[0].function_name
-  handler       = "main.handler"
-  runtime       = "python3.11"
+  function_name = data.aws_lambda_function.existing_lambda.function_name
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
   s3_key        = aws_s3_object.lambda_zip.key
+  runtime       = "python3.11"
+  handler       = "main.handler"
 
-  role = coalesce(try(data.aws_iam_role.existing_role.arn, null), aws_iam_role.lambda_execution_role[0].arn)
-
-  memory_size = 128
-  timeout     = 30
+  role = coalesce(
+    try(data.aws_iam_role.existing_role.arn, null),
+    try(aws_iam_role.lambda_execution_role[0].arn, null)
+  )
 
   environment {
     variables = {
