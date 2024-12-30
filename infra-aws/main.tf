@@ -17,14 +17,15 @@ resource "aws_s3_object" "lambda_zip" {
   source = "../deployment-package.zip" # Ruta local del ZIP
 }
 
-# Data source para buscar el rol existente
-data "aws_iam_role" "existing_role" {
-  name = "kuosel-lambda-execution-role"
+# Data source para buscar la Lambda existente
+data "aws_lambda_function" "existing_lambda" {
+  count         = var.lambda_already_exists ? 1 : 0
+  function_name = "kuosel-lambdalith"
 }
 
-# Recurso para crear el rol si no existe
+# Rol IAM para Lambda
 resource "aws_iam_role" "lambda_execution_role" {
-  count = length(data.aws_iam_role.existing_role) > 0 ? 0 : 1
+  count = var.lambda_already_exists ? 0 : 1
 
   name = "kuosel-lambda-execution-role"
 
@@ -44,21 +45,21 @@ resource "aws_iam_role" "lambda_execution_role" {
 
 # Adjuntar políticas al rol
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = coalesce(data.aws_iam_role.existing_role.name, aws_iam_role.lambda_execution_role[0].name)
+  role       = coalesce(data.aws_iam_role.existing_lambda[0].role, aws_iam_role.lambda_execution_role[0].name)
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# Función Lambda (condicional entre importación y creación)
+# Función Lambda
 resource "aws_lambda_function" "kuosel_lambda" {
-  count = var.lambda_already_exists ? 0 : 1
-
+  count       = var.lambda_already_exists ? 0 : 1
   function_name = "kuosel-lambdalith"
   handler       = "main.handler"
   runtime       = "python3.11"
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
   s3_key        = aws_s3_object.lambda_zip.key
 
-  role = coalesce(data.aws_iam_role.existing_role.arn, aws_iam_role.lambda_execution_role[0].arn)
+  # Usar el rol existente o crear uno nuevo
+  role = coalesce(data.aws_lambda_function.existing_lambda[0].role, aws_iam_role.lambda_execution_role[0].arn)
 
   memory_size = 128
   timeout     = 30
@@ -76,10 +77,4 @@ resource "aws_lambda_function" "kuosel_lambda" {
       PYTHONPATH           = "/var/task/dependencies:/var/task"
     }
   }
-}
-
-# Data source para buscar la función Lambda existente
-data "aws_lambda_function" "existing_lambda" {
-  count         = var.lambda_already_exists ? 1 : 0
-  function_name = "kuosel-lambdalith"
 }

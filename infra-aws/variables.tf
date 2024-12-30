@@ -29,3 +29,9 @@ variable "DB_PORT" {
 variable "DB_NAME" {
   description = "Nombre de la base de datos"
 }
+
+variable "lambda_already_exists" {
+  description = "Indica si la función Lambda ya existe en AWS"
+  type        = bool
+  default     = false
+}
