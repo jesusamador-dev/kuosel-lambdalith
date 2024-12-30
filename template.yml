@@ -50,11 +50,3 @@ Resources:
           PYTHONPATH: "/var/task/dependencies:/var/task"  # Añade dependencies al PYTHONPATH
       Policies:
         - AWSLambdaBasicExecutionRole  # Asigna permisos básicos de ejecución
-
-    Layer1:
-      Type: AWS::Serverless::LayerVersion
-      Properties:
-        ContentUri: ./dependencies
-        LayerName: dependencies
-        CompatibleRuntimes:
-          - python3.11
