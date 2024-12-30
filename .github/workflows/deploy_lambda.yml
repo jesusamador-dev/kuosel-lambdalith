@@ -32,8 +32,8 @@ jobs:
             --target=dependencies \
             --implementation cp \
             --python-version 3.11 \
-            --only-binary=:all: \
-            --upgrade -r requirements.txt
+            --upgrade -r requirements.txt || exit 1
+
 
       # 4. Empaquetar la aplicación Lambda usando AWS SAM
       - name: Package SAM application
