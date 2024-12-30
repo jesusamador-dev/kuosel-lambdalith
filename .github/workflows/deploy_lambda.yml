@@ -52,7 +52,8 @@ jobs:
           rsync -av dependencies/ package/dependencies
           cp main.py package/
           cp -r src/ package/src
-          ls -l
+          cd package
+          zip -r ../deployment-package.zip .
       
 
       # 5. Configurar AWS CLI
@@ -64,24 +65,28 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       # 6. Desplegar la función Lambda
-      - name: Deploy with SAM
+      - name: Update config
         run: |
-          sam build
-          sam deploy --use-container --resolve-s3 --no-confirm-changeset --stack-name kuosel-lambdalith --capabilities CAPABILITY_IAM \
-            --parameter-overrides \
-            CognitoUserPoolId=${{ secrets.COGNITO_USER_POOL_ID }} \
-            CognitoClientId=${{ secrets.COGNITO_CLIENT_ID }} \
-            AwsRegion=${{ secrets.AWS_REGION }} \
-            CognitoDomain=${{ secrets.COGNITO_DOMAIN }} \
-            DbUser=${{ secrets.DB_USER }} \
-            DbPassword=${{ secrets.DB_PASSWORD }} \
-            DbHost=${{ secrets.DB_HOST }} \
-            DbPort=${{ secrets.DB_PORT }} \
-            DbName=${{ secrets.DB_NAME }}
+          aws lambda update-function-configuration \
+          --function-name kuosel-lambdalith \
+          --environment Variables='{
+            "COGNITO_USER_POOL_ID": "'"${COGNITO_USER_POOL_ID}"'",
+            "COGNITO_CLIENT_ID": "'"${COGNITO_CLIENT_ID}"'",
+            "COGNITO_DOMAIN": "'"${COGNITO_DOMAIN}"'",
+            "DB_USER": "'"${DB_USER}"'",
+            "DB_PASSWORD": "'"${DB_PASSWORD}"'",
+            "DB_HOST": "'"${DB_HOST}"'",
+            "DB_PORT": "'"${DB_PORT}"'",
+            "DB_NAME": "'"${DB_NAME}"'",
+            "PYTHONPATH": "/var/task/dependencies:/var/task"
+          }'
 
-      - name: Search zip
+      # 6. Desplegar la función Lambda
+      - name: Deploy with CLI
         run: |
-            ls -l .aws-sam/build/KuoselLambdaLith | grep .so
+          aws lambda update-function-code \
+          --function-name kuosel-lambdalith \
+          --zip-file fileb://deployment-package.zip
             
 
       # 7. Limpiar archivos temporales
