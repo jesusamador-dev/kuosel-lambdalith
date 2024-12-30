@@ -47,16 +47,8 @@ jobs:
       # 4. Empaquetar la aplicación Lambda usando AWS SAM
       - name: Package SAM application
         run: |
-          mkdir -p package/
           chmod -R 755 dependencies/
-          rsync -av dependencies/ package/dependencies
-          cp main.py package/  # Copiar main.py a la raíz de package
-          cp -r src/ package/src  # Si tienes una carpeta src con tu código fuente
-          cd package && zip -r ../deployment-package.zip .
-
-      - name: Validate ZIP contents
-        run: |
-          unzip -ls deployment-package.zip | grep _pydantic_core
+          ls -l
       
 
       # 5. Configurar AWS CLI
@@ -82,11 +74,6 @@ jobs:
             DbHost=${{ secrets.DB_HOST }} \
             DbPort=${{ secrets.DB_PORT }} \
             DbName=${{ secrets.DB_NAME }}
-          
-
-      - name: Validate ZIP contents
-        run: |
-          unzip -ls deployment-package.zip | grep _pydantic_core
           
 
       # 7. Limpiar archivos temporales

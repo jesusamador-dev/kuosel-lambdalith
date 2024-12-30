@@ -34,7 +34,7 @@ Resources:
       FunctionName: kuosel-lambdalith
       Handler: main.handler  # Asegúrate de que el handler apunte correctamente a `main.py`
       Runtime: python3.11
-      CodeUri: package/       # La carpeta donde está el código y las dependencias
+      CodeUri: .       # La carpeta donde está el código y las dependencias
       MemorySize: 128
       Timeout: 30
       Environment:
