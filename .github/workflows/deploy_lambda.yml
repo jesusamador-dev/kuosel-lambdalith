@@ -81,8 +81,7 @@ jobs:
 
       - name: Search zip
         run: |
-            ls -la .aws-sam/build/KuoselLambdaLith
-            find .aws-sam/build/KuoselLambdaLith -name "*.so"
+            ls -l .aws-sam/build/KuoselLambdaLith | grep .so
             
 
       # 7. Limpiar archivos temporales
