@@ -79,9 +79,10 @@ jobs:
             DbPort=${{ secrets.DB_PORT }} \
             DbName=${{ secrets.DB_NAME }}
 
-      - name: Prepare package directory
+      - name: Search zip
         run: |
-            unzip -l .aws-sam/build/KuoselLambdaLith.zip | grep _pydantic_core
+            ls -la
+            
 
       # 7. Limpiar archivos temporales
       - name: Clean up temporary files
