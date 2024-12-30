@@ -69,32 +69,31 @@ jobs:
         working-directory: infra-aws
         run: terraform init
 
-      # 9. Planificar cambios con Terraform
       - name: Terraform Plan
         run: |
           ls -la
           terraform -chdir=infra-aws plan \
-            -var="COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" \
-            -var="COGNITO_CLIENT_ID=${{ secrets.COGNITO_CLIENT_ID }}" \
-            -var="COGNITO_DOMAIN=${{ secrets.COGNITO_DOMAIN }}" \
-            -var="DB_USER=${{ secrets.DB_USER }}" \
-            -var="DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
-            -var="DB_HOST=${{ secrets.DB_HOST }}" \
-            -var="DB_PORT=${{ secrets.DB_PORT }}" \
-            -var="DB_NAME=${{ secrets.DB_NAME }}"
+          -var="COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" \
+          -var="COGNITO_CLIENT_ID=${{ secrets.COGNITO_CLIENT_ID }}" \
+          -var="COGNITO_DOMAIN=${{ secrets.COGNITO_DOMAIN }}" \
+          -var="DB_USER=${{ secrets.DB_USER }}" \
+          -var="DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+          -var="DB_HOST=${{ secrets.DB_HOST }}" \
+          -var="DB_PORT=${{ secrets.DB_PORT }}" \
+          -var="DB_NAME=${{ secrets.DB_NAME }}"
 
-      # 10. Aplicar cambios con Terraform
-      - name: Apply Terraform
-        working-directory: infra-aws
-        run: terraform apply -auto-approve \
-          -var "COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" \
-          -var "COGNITO_CLIENT_ID=${{ secrets.COGNITO_CLIENT_ID }}" \
-          -var "COGNITO_DOMAIN=${{ secrets.COGNITO_DOMAIN }}" \
-          -var "DB_USER=${{ secrets.DB_USER }}" \
-          -var "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
-          -var "DB_HOST=${{ secrets.DB_HOST }}" \
-          -var "DB_PORT=${{ secrets.DB_PORT }}" \
-          -var "DB_NAME=${{ secrets.DB_NAME }}"
+      - name: Terraform Apply
+        run: |
+          terraform -chdir=infra-aws apply -auto-approve \
+          -var="COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" \
+          -var="COGNITO_CLIENT_ID=${{ secrets.COGNITO_CLIENT_ID }}" \
+          -var="COGNITO_DOMAIN=${{ secrets.COGNITO_DOMAIN }}" \
+          -var="DB_USER=${{ secrets.DB_USER }}" \
+          -var="DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+          -var="DB_HOST=${{ secrets.DB_HOST }}" \
+          -var="DB_PORT=${{ secrets.DB_PORT }}" \
+          -var="DB_NAME=${{ secrets.DB_NAME }}"
+
 
       # 11. Limpiar archivos temporales
       - name: Clean up temporary files
