@@ -22,18 +22,24 @@ jobs:
         with:
           python-version: '3.11'
 
-      # 2. Usar Docker para instalar dependencias en un entorno compatible
-      - name: Install dependencies in Amazon Linux 2
+      # 3. Instalar dependencias y generar archivos .so
+      - name: Install dependencies
         run: |
-            docker run --rm -v $(pwd):/var/task public.ecr.aws/sam/build-python3.11 bash -c "
-            python3 -m pip install --upgrade pip &&
-            mkdir -p /var/task/dependencies &&
-            pip install -r requirements.txt --target /var/task/dependencies
-            "
+          python -m pip install --upgrade pip
+          mkdir -p dependencies
+          pip install --platform manylinux2014_x86_64 \
+                            --target=dependencies \
+                            --implementation cp \
+                            --python-version 3.11 \
+                            --only-binary=:all: \
+                            --upgrade -r requirements.txt
 
+      # 4. Validar generación de archivos .so
+      - name: Validate .so files
+        run: ls -l dependencies/pydantic_core
 
-      # 3. Empaquetar la aplicación Lambda
-      - name: Package Lambda function
+      # 4. Empaquetar la aplicación Lambda usando AWS SAM
+      - name: Package SAM application
         run: |
           mkdir -p package/
           cp -r dependencies/ package/dependencies
