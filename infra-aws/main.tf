@@ -44,13 +44,13 @@ resource "aws_iam_role" "lambda_execution_role" {
 
 # Adjuntar política AWSLambdaBasicExecutionRole
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = coalesce(try(data.aws_iam_role.existing_role.name, null), aws_iam_role.lambda_execution_role[0].name)
+  role       = coalesce(try(data.aws_iam_role.existing_role.name, null), try(aws_iam_role.lambda_execution_role[0].name, null))
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 # Adjuntar política AmazonCognitoPowerUser
 resource "aws_iam_role_policy_attachment" "cognito_power_user" {
-  role       = coalesce(try(data.aws_iam_role.existing_role.name, null), aws_iam_role.lambda_execution_role[0].name)
+  role       = coalesce(try(data.aws_iam_role.existing_role.name, null), try(aws_iam_role.lambda_execution_role[0].name, null))
   policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoPowerUser"
 }
 
