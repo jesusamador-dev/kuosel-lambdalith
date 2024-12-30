@@ -25,18 +25,24 @@ jobs:
       # 3. Instalar dependencias y generar archivos .so
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          mkdir -p dependencies
+         docker run --rm -v $(pwd):/app -w /app public.ecr.aws/sam/build-python3.11 bash -c "
+          python3 -m pip install --upgrade pip &&
           pip install --platform manylinux2014_x86_64 \
-                            --target=dependencies \
-                            --implementation cp \
-                            --python-version 3.11 \
-                            --only-binary=:all: \
-                            --upgrade -r requirements.txt
+                      --target dependencies \
+                      --implementation cp \
+                      --python-version 3.11 \
+                      --only-binary=:all: \
+                      --upgrade -r requirements.txt
+          "
+
 
       # 4. Validar generación de archivos .so
       - name: Validate .so files
         run: ls -l dependencies/pydantic_core
+
+      - name: Clean previous builds
+        run: rm -rf package/ deployment-package.zip
+
 
       # 4. Empaquetar la aplicación Lambda usando AWS SAM
       - name: Package SAM application
@@ -46,6 +52,9 @@ jobs:
           cp main.py package/  # Copiar main.py a la raíz de package
           cp -r src/ package/src  # Si tienes una carpeta src con tu código fuente
           cd package && zip -r ../deployment-package.zip .
+
+      - name: Validate ZIP contents
+        run: unzip -l deployment-package.zip
 
 
       # 5. Configurar AWS CLI
