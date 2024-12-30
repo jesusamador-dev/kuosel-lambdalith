@@ -81,7 +81,7 @@ jobs:
 
       - name: Prepare package directory
         run: |
-            unzip -ls .aws-sam/build/KuoselLambdaLith.zip | grep _pydantic_core
+            unzip -l .aws-sam/build/KuoselLambdaLith.zip | grep _pydantic_core
 
       # 7. Limpiar archivos temporales
       - name: Clean up temporary files
