@@ -38,7 +38,7 @@ jobs:
 
       # 4. Validar generación de archivos .so
       - name: Validate .so files
-        run: ls -l dependencies/pydantic_core
+        run: ls -R dependencies
 
       - name: Clean previous builds
         run: rm -rf package/ deployment-package.zip
@@ -48,7 +48,8 @@ jobs:
       - name: Package SAM application
         run: |
           mkdir -p package/
-          cp -r dependencies/ package/dependencies
+          rsync -av dependencies/ package/dependencies
+          ls -R package/dependencies
           cp main.py package/  # Copiar main.py a la raíz de package
           cp -r src/ package/src  # Si tienes una carpeta src con tu código fuente
           cd package && zip -r ../deployment-package.zip .
