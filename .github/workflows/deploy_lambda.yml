@@ -35,16 +35,11 @@ jobs:
                       --upgrade -r requirements.txt
           "
 
-
       # 4. Validar generación de archivos .so
       - name: Validate .so files
         run: ls -l dependencies/pydantic_core
 
-      - name: Clean previous builds
-        run: rm -rf package/ deployment-package.zip
-
-
-      # 4. Empaquetar la aplicación Lambda usando AWS SAM
+      # 5. Empaquetar la aplicación Lambda
       - name: Prepare package directory
         run: |
           chmod -R 755 dependencies/
@@ -54,9 +49,8 @@ jobs:
           cp -r src/ package/src
           cd package
           zip -r ../deployment-package.zip .
-      
 
-      # 5. Configurar AWS CLI
+      # 6. Configurar AWS CLI
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -64,22 +58,43 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 6. Desplegar la función Lambda
-      - name: Update config
-        run: |
-         aws lambda update-function-configuration \
-         --function-name kuosel-lambdalith \
-         --environment Variables="{\"COGNITO_USER_POOL_ID\":\"${COGNITO_USER_POOL_ID}\",\"COGNITO_CLIENT_ID\":\"${COGNITO_CLIENT_ID}\",\"COGNITO_DOMAIN\":\"${COGNITO_DOMAIN}\",\"DB_USER\":\"${DB_USER}\",\"DB_PASSWORD\":\"${DB_PASSWORD}\",\"DB_HOST\":\"${DB_HOST}\",\"DB_PORT\":\"${DB_PORT}\",\"DB_NAME\":\"${DB_NAME}\",\"PYTHONPATH\":\"/var/task/dependencies:/var/task\"}"
-        
+      # 7. Configurar Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
 
-      # 6. Desplegar la función Lambda
-      - name: Deploy with CLI
-        run: |
-          aws lambda update-function-code \
-          --function-name kuosel-lambdalith \
-          --zip-file fileb://deployment-package.zip
-            
+      # 8. Inicializar Terraform
+      - name: Initialize Terraform
+        working-directory: infra-aws
+        run: terraform init
 
-      # 7. Limpiar archivos temporales
+      # 9. Planificar cambios con Terraform
+      - name: Terraform Plan
+        working-directory: infra-aws
+        run: terraform plan \
+          -var "COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" \
+          -var "COGNITO_CLIENT_ID=${{ secrets.COGNITO_CLIENT_ID }}" \
+          -var "COGNITO_DOMAIN=${{ secrets.COGNITO_DOMAIN }}" \
+          -var "DB_USER=${{ secrets.DB_USER }}" \
+          -var "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+          -var "DB_HOST=${{ secrets.DB_HOST }}" \
+          -var "DB_PORT=${{ secrets.DB_PORT }}" \
+          -var "DB_NAME=${{ secrets.DB_NAME }}"
+
+      # 10. Aplicar cambios con Terraform
+      - name: Apply Terraform
+        working-directory: infra-aws
+        run: terraform apply -auto-approve \
+          -var "COGNITO_USER_POOL_ID=${{ secrets.COGNITO_USER_POOL_ID }}" \
+          -var "COGNITO_CLIENT_ID=${{ secrets.COGNITO_CLIENT_ID }}" \
+          -var "COGNITO_DOMAIN=${{ secrets.COGNITO_DOMAIN }}" \
+          -var "DB_USER=${{ secrets.DB_USER }}" \
+          -var "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+          -var "DB_HOST=${{ secrets.DB_HOST }}" \
+          -var "DB_PORT=${{ secrets.DB_PORT }}" \
+          -var "DB_NAME=${{ secrets.DB_NAME }}"
+
+      # 11. Limpiar archivos temporales
       - name: Clean up temporary files
         run: rm -rf package/ dependencies/ deployment-package.zip
