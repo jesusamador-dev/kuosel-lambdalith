@@ -22,22 +22,17 @@ jobs:
         with:
           python-version: '3.11'
 
-      # 3. Instalar dependencias en la carpeta dependencies
-      - name: Install dependencies
+      # 2. Usar Docker para instalar dependencias en un entorno compatible
+      - name: Install dependencies in Amazon Linux 2
         run: |
-          python -m pip install --upgrade pip
-          mkdir -p dependencies
-          pip install \
-            --platform manylinux2014_x86_64 \
-            --target=dependencies \
-            --implementation cp \
-            --python-version 3.11 \
-            --only-binary=:all: \
-            --upgrade -r requirements.txt || exit 1
+          docker run --rm -v $(pwd):/var/task lambci/lambda:build-python3.11 bash -c "
+          python3 -m pip install --upgrade pip &&
+          mkdir -p /var/task/dependencies &&
+          pip install -r requirements.txt --target /var/task/dependencies
+          "
 
-
-      # 4. Empaquetar la aplicación Lambda usando AWS SAM
-      - name: Package SAM application
+      # 3. Empaquetar la aplicación Lambda
+      - name: Package Lambda function
         run: |
           mkdir -p package/
           cp -r dependencies/ package/dependencies
