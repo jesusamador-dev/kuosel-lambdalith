@@ -55,8 +55,9 @@ jobs:
           cd package && zip -r ../deployment-package.zip .
 
       - name: Validate ZIP contents
-        run: unzip -l deployment-package.zip
-
+        run: |
+          unzip -l deployment-package.zip | grep _pydantic_core
+      
 
       # 5. Configurar AWS CLI
       - name: Configure AWS credentials
