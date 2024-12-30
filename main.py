@@ -15,4 +15,4 @@ app.include_router(auth_router, prefix="/v1")
 handler = Mangum(app)
 
 
-#Codigo nuevo 12
+#Codigo nuevo 13

@@ -67,10 +67,10 @@ jobs:
       # 6. Desplegar la función Lambda
       - name: Update config
         run: |
-          aws lambda update-function-configuration \
-          --function-name kuosel-lambdalith \
-          --environment Variables='{"COGNITO_USER_POOL_ID":"'"${COGNITO_USER_POOL_ID}"'","COGNITO_CLIENT_ID":"'"${COGNITO_CLIENT_ID}"'","COGNITO_DOMAIN":"'"${COGNITO_DOMAIN}"'","DB_USER":"'"${DB_USER}"'","DB_PASSWORD":"'"${DB_PASSWORD}"'","DB_HOST":"'"${DB_HOST}"'","DB_PORT":"'"${DB_PORT}"'","DB_NAME":"'"${DB_NAME}"'","PYTHONPATH":"/var/task/dependencies:/var/task"}'
-
+         aws lambda update-function-configuration \
+         --function-name kuosel-lambdalith \
+         --environment Variables="{\"COGNITO_USER_POOL_ID\":\"${COGNITO_USER_POOL_ID}\",\"COGNITO_CLIENT_ID\":\"${COGNITO_CLIENT_ID}\",\"COGNITO_DOMAIN\":\"${COGNITO_DOMAIN}\",\"DB_USER\":\"${DB_USER}\",\"DB_PASSWORD\":\"${DB_PASSWORD}\",\"DB_HOST\":\"${DB_HOST}\",\"DB_PORT\":\"${DB_PORT}\",\"DB_NAME\":\"${DB_NAME}\",\"PYTHONPATH\":\"/var/task/dependencies:/var/task\"}"
+        
 
       # 6. Desplegar la función Lambda
       - name: Deploy with CLI
