@@ -24,7 +24,7 @@ data "aws_iam_role" "existing_role" {
 
 # Crear el rol si no existe
 resource "aws_iam_role" "lambda_execution_role" {
-  count = try(length(data.aws_iam_role.existing_role.name), 0) > 0 ? 0 : 1
+  count = length(data.aws_iam_role.existing_role.name) > 0 ? 0 : 1
 
   name = "kuosel-lambda-execution-role"
 
@@ -44,7 +44,7 @@ resource "aws_iam_role" "lambda_execution_role" {
 
 # Adjuntar políticas al rol
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = coalesce(data.aws_iam_role.existing_role.name, aws_iam_role.lambda_execution_role[0].name)
+  role       = length(data.aws_iam_role.existing_role.name) > 0 ? data.aws_iam_role.existing_role.name : aws_iam_role.lambda_execution_role[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
@@ -64,7 +64,7 @@ resource "aws_lambda_function" "kuosel_lambda" {
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
   s3_key        = aws_s3_object.lambda_zip.key
 
-  role = coalesce(data.aws_iam_role.existing_role.arn, aws_iam_role.lambda_execution_role[0].arn)
+  role = length(data.aws_iam_role.existing_role.name) > 0 ? data.aws_iam_role.existing_role.arn : aws_iam_role.lambda_execution_role[0].arn
 
   memory_size = 128
   timeout     = 30
@@ -83,5 +83,4 @@ resource "aws_lambda_function" "kuosel_lambda" {
     }
   }
 }
-
 
