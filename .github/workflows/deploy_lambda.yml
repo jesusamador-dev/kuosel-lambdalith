@@ -32,6 +32,7 @@ jobs:
                       --implementation cp \
                       --python-version 3.11 \
                       --only-binary=:all: \
+                      --no-cache-dir \
                       --upgrade -r requirements.txt
           "
 
