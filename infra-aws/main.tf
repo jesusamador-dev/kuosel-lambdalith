@@ -56,7 +56,7 @@ resource "aws_lambda_function" "kuosel_lambda" {
   runtime       = "python3.11"
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
   s3_key        = aws_s3_object.lambda_zip.key
-  role          = aws_iam_role.lambda_execution_role.arn
+  role          = coalesce(data.aws_iam_role.existing_role.arn, aws_iam_role.lambda_execution_role[0].arn)
 
   memory_size = 128
   timeout     = 30
