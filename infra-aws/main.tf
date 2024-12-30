@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "us-east-2"
 }
 
 # Bucket S3 para almacenar el ZIP de la Lambda
@@ -14,7 +14,7 @@ resource "random_id" "bucket_id" {
 resource "aws_s3_object" "lambda_zip" {
   bucket = aws_s3_bucket.lambda_bucket.id
   key    = "deployment-package.zip"
-  source = "package/deployment-package.zip" # Ruta local del ZIP
+  source = "deployment-package.zip" # Ruta local del ZIP
 }
 
 # Rol de ejecución para la Lambda
