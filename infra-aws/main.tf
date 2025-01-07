@@ -61,13 +61,14 @@ data "aws_lambda_function" "existing_lambda" {
 
 # Unificar creación y actualización de Lambda
 resource "aws_lambda_function" "kuosel_lambda" {
-  count = can(data.aws_lambda_function.existing_lambda.function_name) ? 0 : 1
 
   function_name = "kuosel-lambdalith"
   handler       = "main.handler"
   runtime       = "python3.11"
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
   s3_key        = aws_s3_object.lambda_zip.key
+
+  source_code_hash = filebase64sha256("../deployment-package.zip") # Detecta cambios en el archivo ZIP
 
   role = coalesce(
     try(data.aws_iam_role.existing_role.arn, null),
