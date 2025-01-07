@@ -4,15 +4,10 @@ output "s3_bucket_name" {
 
 
 output "lambda_function_name" {
-  value = coalesce(
-    try(data.aws_lambda_function.existing_lambda.function_name, null),
-    try(aws_lambda_function.kuosel_lambda[0].function_name, null)
-  )
+  value = try(aws_lambda_function.kuosel_lambda.function_name, null)
 }
 
 output "lambda_function_arn" {
-  value = coalesce(
-    try(data.aws_lambda_function.existing_lambda.arn, null),
-    try(aws_lambda_function.kuosel_lambda[0].arn, null)
-  )
+  value = try(aws_lambda_function.kuosel_lambda.arn, null)
 }
+
