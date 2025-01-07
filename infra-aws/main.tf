@@ -59,17 +59,18 @@ data "aws_lambda_function" "existing_lambda" {
   function_name = "kuosel-lambdalith"
 }
 
-# Crear la Lambda si no existe
+# Unificar creación y actualización de Lambda
 resource "aws_lambda_function" "kuosel_lambda" {
-  count = can(data.aws_lambda_function.existing_lambda.function_name) ? 0 : 1
-
   function_name = "kuosel-lambdalith"
   handler       = "main.handler"
   runtime       = "python3.11"
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
   s3_key        = aws_s3_object.lambda_zip.key
 
-  role = coalesce(try(data.aws_iam_role.existing_role.arn, null), aws_iam_role.lambda_execution_role[0].arn)
+  role = coalesce(
+    try(data.aws_iam_role.existing_role.arn, null),
+    try(aws_iam_role.lambda_execution_role[0].arn, null)
+  )
 
   memory_size = 128
   timeout     = 30
@@ -87,32 +88,10 @@ resource "aws_lambda_function" "kuosel_lambda" {
       PYTHONPATH           = "/var/task/dependencies:/var/task"
     }
   }
-}
 
-# Actualizar la Lambda si ya existe
-resource "aws_lambda_function" "update_lambda" {
-  function_name = data.aws_lambda_function.existing_lambda.function_name
-  s3_bucket     = aws_s3_bucket.lambda_bucket.id
-  s3_key        = aws_s3_object.lambda_zip.key
-  runtime       = "python3.11"
-  handler       = "main.handler"
-
-  role = coalesce(
-    try(data.aws_iam_role.existing_role.arn, null),
-    try(aws_iam_role.lambda_execution_role[0].arn, null)
-  )
-
-  environment {
-    variables = {
-      COGNITO_USER_POOL_ID = var.COGNITO_USER_POOL_ID
-      COGNITO_CLIENT_ID    = var.COGNITO_CLIENT_ID
-      COGNITO_DOMAIN       = var.COGNITO_DOMAIN
-      DB_USER              = var.DB_USER
-      DB_PASSWORD          = var.DB_PASSWORD
-      DB_HOST              = var.DB_HOST
-      DB_PORT              = var.DB_PORT
-      DB_NAME              = var.DB_NAME
-      PYTHONPATH           = "/var/task/dependencies:/var/task"
-    }
+  lifecycle {
+    # Permitir actualizaciones sin recrear la Lambda
+    create_before_destroy = false
+    ignore_changes = [role]
   }
 }
