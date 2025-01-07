@@ -61,6 +61,8 @@ data "aws_lambda_function" "existing_lambda" {
 
 # Unificar creación y actualización de Lambda
 resource "aws_lambda_function" "kuosel_lambda" {
+  count = can(data.aws_lambda_function.existing_lambda.function_name) ? 0 : 1
+
   function_name = "kuosel-lambdalith"
   handler       = "main.handler"
   runtime       = "python3.11"
@@ -69,7 +71,7 @@ resource "aws_lambda_function" "kuosel_lambda" {
 
   role = coalesce(
     try(data.aws_iam_role.existing_role.arn, null),
-    try(aws_iam_role.lambda_execution_role[0].arn, null)
+    aws_iam_role.lambda_execution_role[0].arn
   )
 
   memory_size = 128
@@ -88,10 +90,5 @@ resource "aws_lambda_function" "kuosel_lambda" {
       PYTHONPATH           = "/var/task/dependencies:/var/task"
     }
   }
-
-  lifecycle {
-    # Permitir actualizaciones sin recrear la Lambda
-    create_before_destroy = false
-    ignore_changes = [role]
-  }
 }
+
