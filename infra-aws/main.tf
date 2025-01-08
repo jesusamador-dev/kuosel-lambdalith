@@ -98,10 +98,7 @@ resource "aws_lambda_function" "kuosel_lambda_update" {
   function_name = data.aws_lambda_function.existing_lambda.function_name
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
   s3_key        = aws_s3_object.lambda_zip.key
-  role = coalesce(
-    try(data.aws_iam_role.existing_role.arn, null),
-    length(aws_iam_role.lambda_execution_role) > 0 ? aws_iam_role.lambda_execution_role[0].arn : null
-  )
+  role = data.aws_lambda_function.existing_lambda.role
 
   source_code_hash = filebase64sha256("../deployment-package.zip")
 }
