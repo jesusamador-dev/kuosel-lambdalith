@@ -54,6 +54,11 @@ resource "aws_iam_role_policy_attachment" "cognito_power_user" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonCognitoPowerUser"
 }
 
+resource "aws_iam_role_policy_attachment" "s3_power_user" {
+  role       = coalesce(try(data.aws_iam_role.existing_role.name, null), try(aws_iam_role.lambda_execution_role[0].name, null))
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
 # Data source para buscar la Lambda existente
 data "aws_lambda_function" "existing_lambda" {
   function_name = "kuosel-lambdalith"
