@@ -98,7 +98,7 @@ resource "aws_lambda_function" "kuosel_lambda" {
   }
 }
 
-resource "aws_lambda_function_code" "kuosel_lambda_update" {
+resource "aws_lambda_function" "kuosel_lambda_update" {
   count         = length(try(data.aws_lambda_function.existing_lambda.id, [])) > 0 ? 1 : 0
   function_name = data.aws_lambda_function.existing_lambda.function_name
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
