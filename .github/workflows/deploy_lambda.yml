@@ -65,16 +65,16 @@ jobs:
           terraform_version: 1.5.0
 
       # 8. Inicializar Terraform
-      - name: Initialize Terraform
-        working-directory: infra-aws
-        run: terraform init
+       # 5. Inicializar Terraform
+      - name: Terraform Init
+        run: |
+          terraform -chdir=infra-aws init
 
-      # 7. Importar la Lambda existente si no está en el estado
+      # 6. Importar la Lambda existente si no está en el estado
       - name: Import Lambda if exists
         run: |
-          terraform -chdir=infra-aws plan \
-          terraform state show aws_lambda_function.kuosel_lambda || \
-          terraform import aws_lambda_function.kuosel_lambda kuosel-lambdalith
+          terraform -chdir=infra-aws state show aws_lambda_function.kuosel_lambda || \
+          terraform -chdir=infra-aws import aws_lambda_function.kuosel_lambda kuosel-lambdalith
 
       - name: Terraform Plan
         run: |
