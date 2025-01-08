@@ -67,11 +67,11 @@ resource "aws_lambda_function" "kuosel_lambda" {
   s3_bucket     = aws_s3_bucket.lambda_bucket.id
   s3_key        = aws_s3_object.lambda_zip.key
 
-  source_code_hash = filebase64sha256("../deployment-package.zip") # Detecta cambios en el archivo ZIP
+  source_code_hash = filebase64sha256("../deployment-package.zip")
 
   role = coalesce(
     try(data.aws_iam_role.existing_role.arn, null),
-    try(aws_iam_role.lambda_execution_role.arn, null)
+    length(aws_iam_role.lambda_execution_role) > 0 ? aws_iam_role.lambda_execution_role[0].arn : null
   )
 
   memory_size = 128
