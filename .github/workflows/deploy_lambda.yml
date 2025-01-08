@@ -70,13 +70,6 @@ jobs:
         run: |
           terraform -chdir=infra-aws init
 
-      # 6. Importar la Lambda existente si no está en el estado
-      - name: Import Lambda if exists
-        run: |
-          terraform -chdir=infra-aws state show aws_lambda_function.kuosel_lambda || \
-          terraform -chdir=infra-aws import aws_lambda_function.kuosel_lambda kuosel-lambdalith
-        continue-on-error: true
-
       - name: Terraform Plan
         run: |
           ls -la
