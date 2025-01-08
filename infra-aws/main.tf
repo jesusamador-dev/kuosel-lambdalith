@@ -61,7 +61,6 @@ data "aws_lambda_function" "existing_lambda" {
 
 # Unificar creación y actualización de Lambda
 resource "aws_lambda_function" "kuosel_lambda" {
-
   function_name = "kuosel-lambdalith"
   handler       = "main.handler"
   runtime       = "python3.11"
@@ -72,7 +71,7 @@ resource "aws_lambda_function" "kuosel_lambda" {
 
   role = coalesce(
     try(data.aws_iam_role.existing_role.arn, null),
-    aws_iam_role.lambda_execution_role[0].arn
+    try(aws_iam_role.lambda_execution_role.arn, null)
   )
 
   memory_size = 128
@@ -92,4 +91,5 @@ resource "aws_lambda_function" "kuosel_lambda" {
     }
   }
 }
+
 
