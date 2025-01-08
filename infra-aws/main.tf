@@ -61,6 +61,7 @@ data "aws_lambda_function" "existing_lambda" {
 
 # Unificar creación y actualización de Lambda
 resource "aws_lambda_function" "kuosel_lambda" {
+  count         = length(try(data.aws_lambda_function.existing_lambda.id, [])) > 0 ? 0 : 1
   function_name = "kuosel-lambdalith"
   handler       = "main.handler"
   runtime       = "python3.11"
@@ -90,6 +91,15 @@ resource "aws_lambda_function" "kuosel_lambda" {
       PYTHONPATH           = "/var/task/dependencies:/var/task"
     }
   }
+}
+
+resource "aws_lambda_function" "kuosel_lambda_update" {
+  count         = length(try(data.aws_lambda_function.existing_lambda.id, [])) > 0 ? 1 : 0
+  function_name = data.aws_lambda_function.existing_lambda.function_name
+  s3_bucket     = aws_s3_bucket.lambda_bucket.id
+  s3_key        = aws_s3_object.lambda_zip.key
+
+  source_code_hash = filebase64sha256("../deployment-package.zip")
 }
 
 
