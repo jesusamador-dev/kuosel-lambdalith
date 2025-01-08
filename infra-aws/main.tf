@@ -98,16 +98,16 @@ resource "aws_lambda_function" "kuosel_lambda" {
   }
 }
 
-resource "aws_lambda_function" "kuosel_lambda_update" {
-  count         = length(try(data.aws_lambda_function.existing_lambda.id, [])) > 0 ? 1 : 0
-  function_name = data.aws_lambda_function.existing_lambda.function_name
-  s3_bucket     = aws_s3_bucket.lambda_bucket.id
-  s3_key        = aws_s3_object.lambda_zip.key
-  role = data.aws_lambda_function.existing_lambda.role
-  handler = data.aws_lambda_function.existing_lambda.handler
-  runtime = data.aws_lambda_function.existing_lambda.runtime
+# Actualizar el código de la Lambda si ya existe
+resource "null_resource" "lambda_update_trigger" {
+  count = length(try(data.aws_lambda_function.existing_lambda.arn, [])) > 0 ? 1 : 0
 
-  source_code_hash = filebase64sha256("../deployment-package.zip")
+  provisioner "local-exec" {
+    command = <<EOT
+      aws lambda update-function-code \
+        --function-name ${data.aws_lambda_function.existing_lambda.function_name} \
+        --s3-bucket ${aws_s3_bucket.lambda_bucket.id} \
+        --s3-key ${aws_s3_object.lambda_zip.key}
+    EOT
+  }
 }
-
-
