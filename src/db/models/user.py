@@ -1,4 +1,3 @@
-# app/db/models/user.py
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.sql import func
 from src.db.database import Base
