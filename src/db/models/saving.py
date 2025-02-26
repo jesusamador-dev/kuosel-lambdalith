@@ -16,7 +16,7 @@ class Saving(BaseModel):
     deleted_at: Optional[date] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class SavingProgress(BaseModel):

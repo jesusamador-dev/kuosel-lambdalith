@@ -2,8 +2,8 @@ from src.db.repositories.transaction_repository import TransactionRepository
 
 
 class TransactionService:
-    def __init__(self, transaction_repo: TransactionRepository):
-        self.transaction_repo = transaction_repo
+    def __init__(self, repository: TransactionRepository):
+        self.transaction_repo = repository
 
     async def create_transaction(self, transaction_data: dict):
         return await self.transaction_repo.insert_transaction(transaction_data)

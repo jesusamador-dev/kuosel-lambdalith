@@ -1,12 +1,25 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.db.database import get_db
+from src.db.repositories.transaction_repository import TransactionRepository
 from src.services.transaction_service import TransactionService
 from src.db.models.transaction import TransactionCreate, TransactionUpdate
 
 router = APIRouter()
 
 
+def get_transactions_repository(db: AsyncSession = Depends(get_db)) -> TransactionRepository:
+    return TransactionRepository(db)
+
+
+def get_transactions_service(repo: TransactionService = Depends(get_transactions_repository)) -> TransactionService:
+    return TransactionService(repository=repo)
+
+
 @router.post("/transactions", status_code=201)
-async def create_transaction(transaction: TransactionCreate, service: TransactionService = Depends()):
+async def create_transaction(transaction: TransactionCreate,
+                             service: TransactionService = Depends(get_transactions_service)):
     try:
         new_transaction = await service.create_transaction(transaction.dict())
         return {"message": "Transacción registrada con éxito", "transaction": new_transaction}
@@ -15,7 +28,7 @@ async def create_transaction(transaction: TransactionCreate, service: Transactio
 
 
 @router.get("/transactions/{trans_id}")
-async def get_transaction(trans_id: int, service: TransactionService = Depends()):
+async def get_transaction(trans_id: int,  service: TransactionService = Depends(get_transactions_service)):
     try:
         transaction = await service.get_transaction(trans_id)
         return transaction
@@ -24,7 +37,8 @@ async def get_transaction(trans_id: int, service: TransactionService = Depends()
 
 
 @router.put("/transactions/{trans_id}")
-async def update_transaction(trans_id: int, transaction: TransactionUpdate, service: TransactionService = Depends()):
+async def update_transaction(trans_id: int, transaction: TransactionUpdate,
+                             service: TransactionService = Depends(get_transactions_service)):
     try:
         updated_transaction = await service.update_transaction(trans_id, transaction.dict(exclude_unset=True))
         return {"message": "Transacción actualizada con éxito", "transaction": updated_transaction}
@@ -33,7 +47,7 @@ async def update_transaction(trans_id: int, transaction: TransactionUpdate, serv
 
 
 @router.delete("/transactions/{trans_id}")
-async def delete_transaction(trans_id: int, service: TransactionService = Depends()):
+async def delete_transaction(trans_id: int,  service: TransactionService = Depends(get_transactions_service)):
     try:
         deleted_transaction = await service.delete_transaction(trans_id)
         return {"message": "Transacción eliminada con éxito", "transaction": deleted_transaction}
@@ -51,7 +65,7 @@ async def list_transactions(
     end_date: str = Query(None),
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-    service: TransactionService = Depends()
+    service: TransactionService = Depends(get_transactions_service)
 ):
     filters = {
         "user_id": user_id,
