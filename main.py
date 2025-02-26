@@ -17,5 +17,5 @@ app.include_router(budget_router, prefix="/v1")
 app.include_router(transaction_router, prefix="/v1")
 app.include_router(saving_router, prefix="/v1")
 
-# Configurar handler para AWS Lambda
+# Configurar handler para AWS Lambda para prete
 handler = Mangum(app)
