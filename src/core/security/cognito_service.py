@@ -128,11 +128,11 @@ class CognitoService:
             )
 
             return {
-                "AccessToken": response["AuthenticationResult"]["AccessToken"],
-                "IdToken": response["AuthenticationResult"]["IdToken"],
-                "RefreshToken": response["AuthenticationResult"]["RefreshToken"],
-                "ExpiresIn": response["AuthenticationResult"]["ExpiresIn"],
-                "TokenType": response["AuthenticationResult"]["TokenType"],
+                "accessToken": response["AuthenticationResult"]["AccessToken"],
+                "idToken": response["AuthenticationResult"]["IdToken"],
+                "refreshToken": response["AuthenticationResult"]["RefreshToken"],
+                "expiresIn": response["AuthenticationResult"]["ExpiresIn"],
+                "tokenType": response["AuthenticationResult"]["TokenType"],
             }
         except ClientError as e:
             error_code = e.response["Error"]["Code"]
